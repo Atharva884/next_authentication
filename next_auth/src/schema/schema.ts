@@ -15,6 +15,13 @@ export const schema = z.object({
     .nonempty("Password is required"),
 });
 
+export const forgot_password = z.object({
+  email: z
+    .string()
+    .email({ message: "Invalid email address" })
+    .nonempty("Email is required"),
+});
+
 export const SignUpSchema = z.object({
   firstName: z
     .string()

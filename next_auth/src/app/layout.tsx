@@ -4,6 +4,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import Navbar from "@/components/Header/Navbar";
 import Provider from "@/components/Provider";
+import { ToastContainer } from "react-toastify";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -29,6 +30,8 @@ export default function RootLayout({
             <div className="flex-grow flex-1">{children}</div>
           </main>
           {/* Footer will come here */}
+
+          <ToastContainer />
         </Provider>
       </body>
     </html>

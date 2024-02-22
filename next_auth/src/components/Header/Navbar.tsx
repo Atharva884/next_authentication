@@ -60,6 +60,15 @@ const Navbar = async () => {
                     Protected (Server)
                   </Link>
 
+                  <Link
+                    href="/admin"
+                    className={buttonVariants({
+                      variant: "ghost",
+                    })}
+                  >
+                    Admin
+                  </Link>
+
                   {session ? (
                     <UserAccountNav session={session} />
                   ) : (

@@ -1,7 +1,8 @@
 const Account = require("../models/Account");
-const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const { sendMail } = require("../utils/helper");
 const User = require("../models/User");
+const bcrypt = require("bcrypt");
 
 exports.googleSignIn = async (req, res) => {
   try {
@@ -87,7 +88,6 @@ exports.sendVerificationLink = async (req, res) => {
     console.log(email);
 
     let account = new Account();
-    let user = new User();
 
     let accountProfile = await account.getAccountByEmail(email);
     console.log(accountProfile);
@@ -95,22 +95,79 @@ exports.sendVerificationLink = async (req, res) => {
       return res.status(422).json({ data: "User not exist" });
     }
 
-    if (accountProfile.role == "user") {
-      const userProfile = await user.getUserByEmail(
-        accountProfile.accountEmail
-      );
-      console.log("UserProfile");
-      console.log(userProfile);
+    // if (accountProfile.role == "user") {
+    //   const userProfile = await user.getUserByEmail(
+    //     accountProfile.accountEmail
+    //   );
+    //   console.log(userProfile);
 
-      const hashedToken = bcrypt.hashSync(userProfile._id.toString(), 10);
+    //   // Idea 1
+    //   // When user signs in using google provider, store the token in the mongodb and whenever he/she want to signs in using email/password, he will be given an link (with token present) and can reset the password
 
-      await user.updateVerifyToken(email, hashedToken);
+    //   // Idea 2
+    //   // Sent a link with the userId (hashed userId) and if the user clicks on that he can reset his password
 
-      let data = await sendMail(userProfile.userEmail, hashedToken, "VERIFY");
+    //   // const payload = {
+    //   //   user_id: "123456",
+    //   //   // other claims...
+    //   //   exp: Math.floor(Date.now() / 1000) + 60 * 60, // Set expiration time to 1 hour from now
+    //   // };
 
-      return res.status(200).json({ data: data });
-    }
+    //   const encryptedUserId = jwt.sign(
+    //     userProfile._id.toJSON(),
+    //     process.env.JWT_SECRET
+    //   );
+
+    //   // await user.updateVerifyToken(email, hashedToken);
+
+    //   let data = await sendMail(userProfile, encryptedUserId);
+
+    //   return res.status(200).json({ data: data });
+    // }
+
+    const encryptedId = jwt.sign(
+      { id: accountProfile._id },
+      process.env.JWT_SECRET,
+      { expiresIn: 2 * 60 }
+    );
+
+    // await user.updateVerifyToken(email, hashedToken);
+
+    let data = await sendMail(accountProfile, encryptedId);
+
+    return res.status(200).json({ data: data });
   } catch (error) {
     console.log(error);
+  }
+};
+
+exports.verifyJWTAndResetPassword = async (req, res) => {
+  try {
+    console.log(req.body);
+    const decoded = jwt.verify(req.body.token, process.env.JWT_SECRET);
+
+    console.log("Decoded");
+    console.log(decoded);
+    console.log(decoded.exp);
+
+    let account = new Account();
+    let salt = bcrypt.genSaltSync(10);
+    let hashedPassword = bcrypt.hashSync(req.body.password, salt);
+
+    const result = await account.getAccountByIdAndUpdatePassword(
+      decoded,
+      hashedPassword
+    );
+
+    return res.status(200).json({ data: result });
+  } catch (error) {
+    if (error.name == "TokenExpiredError") {
+      console.log("Expiration error");
+      console.log(error);
+      return res.status(400).json({ data: "Token has been expired" });
+    } else {
+      console.log(error);
+      return res.status(400).json({ data: "Something went wrong" });
+    }
   }
 };

@@ -7,7 +7,7 @@ import React, { useState, useEffect } from "react";
 import { NextPage } from "next";
 import { useSession } from "next-auth/react";
 import { ip } from "@/constant";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const ProfilePage: NextPage = () => {
@@ -66,8 +66,6 @@ const ProfilePage: NextPage = () => {
 
   return (
     <>
-      <ToastContainer />
-
       <div className="mt-6 mx-auto flex w-full max-w-2xl flex-col px-4 sm:px-6">
         <div className="sm:rounded-5xl -mx-4 flex-auto mt-6 bg-white px-4 shadow-2xl shadow-gray-900/10 sm:mx-0 sm:flex-none sm:p-24">
           {error && <span className="text-red-500">Something went wrong!</span>}

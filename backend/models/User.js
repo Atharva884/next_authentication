@@ -12,11 +12,7 @@ User.prototype.cleanUp = function () {
     userFirstName: this.data.accountFirstName,
     userLastName: this.data.accountLastName,
     userEmail: this.data.accountEmail,
-    userPassword: this.data.accountPassword,
     userImage: this.data.accountImage,
-    isEmailVerified: false,
-    verifyToken: null,
-    verifyTokenExpiry: new Date(this.data.verifyTokenExpiry),
     createdDate: new Date(),
   };
 };
@@ -53,17 +49,17 @@ User.prototype.updateUser = async function (profile) {
   }
 };
 
-User.prototype.updateVerifyToken = async function (userEmail, token) {
-  let data = await usersCollection.findOneAndUpdate(
-    { userEmail: userEmail },
-    {
-      $set: {
-        verifyToken: token,
-        verifyTokenExpiry: Date.now() + 1000 * 60 * 60 * 24,
-      },
-    }
-  );
-};
+// User.prototype.updateVerifyToken = async function (userEmail, token) {
+//   let data = await usersCollection.findOneAndUpdate(
+//     { userEmail: userEmail },
+//     {
+//       $set: {
+//         verifyToken: token,
+//         verifyTokenExpiry: Date.now() + 1000 * 60 * 60 * 24,
+//       },
+//     }
+//   );
+// };
 
 User.prototype.verifyTokenByEmail = async function (token) {
   let user = await usersCollection.findOne({

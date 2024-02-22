@@ -18,3 +18,7 @@ type Profile = {
   image: string;
   role: string;
 };
+
+type forgotPass = {
+  email: string;
+};

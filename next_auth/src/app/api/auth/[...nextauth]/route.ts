@@ -9,6 +9,15 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID || "",
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+      profile(profile: any) {
+        return {
+          id: profile.sub,
+          email: profile.email,
+          image: profile.picture,
+          name: profile.name,
+          role: profile.role ?? "user",
+        };
+      },
     }),
     CredentialsProvider({
       name: "credentials",
@@ -120,8 +129,8 @@ export const authOptions: NextAuthOptions = {
       }
     },
     async jwt({ token, trigger, session, user, account, profile }) {
-      // console.log("Useeeeeerrrrrr");
-      // console.log(user);
+      console.log("Useeeeeerrrrrr");
+      console.log(user);
 
       if (user) {
         const {

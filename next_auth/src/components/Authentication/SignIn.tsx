@@ -40,12 +40,10 @@ const SignIn = () => {
         callbackUrl: callbackUrl,
       });
 
-      // if (response?.error === "CredentialsSignin") {
-      //   setMessage("Invalid Credentials");
-      //   setTimeout(clearError, 3000);
-      // } else {
-      //   router.push(callbackUrl);
-      // }
+      if (!response?.ok) {
+        setMessage("Invalid Credentials");
+        setTimeout(clearError, 3000);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -109,12 +107,17 @@ const SignIn = () => {
           or
         </div>
         <GoogleSignInButton />
-        <p className="mt-3 text-gray-600">
-          Not have an account?{" "}
-          <Link href="/signup" className="text-blue-500">
-            Sign up
+        <div className="flex items-center justify-between mt-3">
+          <Link href="/forgot-password" className="text-red-400">
+            Forgot Password?
           </Link>
-        </p>
+          <p className="mt-3 text-gray-600">
+            Not have an account?{" "}
+            <Link href="/signup" className="text-blue-500">
+              Sign up
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/select";
 import { useState } from "react";
 import { ip } from "@/constant";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { XCircle } from "lucide-react";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/navigation";
@@ -86,8 +86,6 @@ const SignUp = () => {
     console.log(result);
 
     if (result.data == "ok") {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
       // Display the toast
       toast("Your account has been successfully created", {
         theme: "colored",
@@ -97,9 +95,7 @@ const SignUp = () => {
       });
 
       // Delay the navigation for a short period to allow the toast to display
-      setTimeout(() => {
-        router.push("/signin", { scroll: false });
-      }, 3000);
+      router.push("/signin", { scroll: false });
     } else {
       setError({
         isTrue: true,
@@ -223,8 +219,6 @@ const SignUp = () => {
         </div>
         <GoogleSignInButton />
       </div>
-
-      <ToastContainer />
     </div>
   );
 };

@@ -21,4 +21,7 @@ router.post("/verifyTokenByEmail", userController.verifyTokenByEmail);
 // Profile Updation
 router.post("/account/updateProfile", accountController.updateProfile);
 
+// Verify JWT Token
+router.post("/verifyToken", accountController.verifyJWTAndResetPassword);
+
 module.exports = router;

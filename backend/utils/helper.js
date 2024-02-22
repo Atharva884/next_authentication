@@ -1,19 +1,26 @@
 const nodemailer = require("nodemailer");
 
-exports.sendMail = async (email, hashedToken, emailType) => {
-  let verifyEmailContent = `
-        <div>
-            <h2>Email Verification</h2>
-            <a href="${process.env.DOMAIN}/verifyEmail?token=${hashedToken}" class="button">Verify Email</a>
-            <p>If the button above doesn't work, you can also copy and paste the following link into your browser:</p>
-            <p>${process.env.DOMAIN}/verifyEmail?token=${hashedToken}</p>
-        </div>
-    `;
+exports.sendMail = async (account, hashedId) => {
+  // let verifyEmailContent = `
+  //       <div>
+  //           <h2>Email Verification</h2>
+  //           <a href="${process.env.DOMAIN}/verifyEmail?token=${hashedToken}" class="button">Verify Email</a>
+  //           <p>If the button above doesn't work, you can also copy and paste the following link into your browser:</p>
+  //           <p>${process.env.DOMAIN}/verifyEmail?token=${hashedToken}</p>
+  //       </div>
+  //   `;
 
   let forgotPasswordContent = `
-        <div>
-            <h1>Reset Password<h1>
-        </div>
+      <div class="container">
+          <p>Dear ${account.accountFirstName} ${account.accountLastName},</p>
+          <p>We noticed that you requested to reset your password for your  account. No need to worry; we're here to help you regain access to your account.</p>
+          <p>To reset your password, please follow the link below:</p>
+          <p><a href="${process.env.DOMAIN}/resetPassword?token=${hashedId}">Reset Password</a></p>
+          <p>If the button above doesn't work, you can also copy and paste the following link into your browser:</p>
+          <p>${process.env.DOMAIN}/resetPassword?token=${hashedId}</p>
+          <p>If you didn't request to reset your password, you can ignore this email - your account is still secure.</p>
+          <p>For security reasons, this link will expire in 10 minutes, so make sure to use it promptly.</p>
+      </div>
     `;
 
   const transporter = nodemailer.createTransport({
@@ -29,10 +36,9 @@ exports.sendMail = async (email, hashedToken, emailType) => {
 
   let options = {
     from: "atharvalolzzz96@gmail.com",
-    to: email,
-    subject:
-      emailType == "VERIFY" ? "Verify your email to login" : "Reset Password",
-    html: emailType == "VERIFY" ? verifyEmailContent : forgotPasswordContent,
+    to: account.accountEmail,
+    subject: "Reset Your Password",
+    html: forgotPasswordContent,
   };
 
   transporter.sendMail(options, (err) => {

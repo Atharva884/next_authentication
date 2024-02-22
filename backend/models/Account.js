@@ -167,4 +167,24 @@ Account.prototype.getAccountByEmail = async function (email) {
   return null;
 };
 
+Account.prototype.getAccountByIdAndUpdatePassword = async function (
+  accountId,
+  password
+) {
+  let data = await accountsCollection.findOneAndUpdate(
+    { _id: new ObjectID(accountId) },
+    {
+      $set: {
+        accountPassword: password,
+      },
+    }
+  );
+
+  if (data.ok) {
+    return "ok";
+  }
+
+  return null;
+};
+
 module.exports = Account;
